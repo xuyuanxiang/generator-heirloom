@@ -1,0 +1,40 @@
+{
+  "name": "generator-heirloom",
+  "version": "0.0.1",
+  "description": "yeoman generator for heirloom web apps",
+  "files": [
+    "app"
+  ],
+  "scripts": {
+    "build": "tsc ./webpack.config.ts && webpack --config webpack.config.js",
+    "watch": "npm run build -- --watch",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xuyuanxiang/generator-heirloom.git"
+  },
+  "keywords": [
+    "yeoman-generator",
+    "heirloom"
+  ],
+  "author": "xuyuanxiang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xuyuanxiang/generator-heirloom/issues"
+  },
+  "homepage": "https://github.com/xuyuanxiang/generator-heirloom#readme",
+  "dependencies": {
+    "@types/lodash": "^4.14.37",
+    "@types/yeoman-generator": "0.0.30",
+    "lodash": "^4.16.4",
+    "typescript": "^2.0.6",
+    "yeoman-generator": "^0.24.1"
+  },
+  "devDependencies": {
+    "@types/webpack": "^1.12.35",
+    "generator-npm-init": "^1.2.3",
+    "ts-loader": "^0.9.5",
+    "webpack": "^1.13.3"
+  }
+}
