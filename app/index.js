@@ -116,4 +116,9 @@ module.exports = class extends Generator {
         });
     }
 
+    end() {
+        this.spawnCommandSync('npm', ['docs', 'heirloom-seed']);
+        this.log(`Please visit: https://xuyuanxiang.github.io/heirloom-seed/ to get started!`);
+    }
+
 };
