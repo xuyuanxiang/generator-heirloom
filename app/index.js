@@ -1,136 +1,119 @@
-var generators = require("yeoman-generator");
-var _ = require("lodash");
+const Generator = require("yeoman-generator");
+const fs = require("fs");
+const _ = require("lodash");
 
-module.exports = generators.Base.extend({
-    constructor: function () {
-        generators.Base.apply(this, arguments);
-        this.argument("name", {desc: 'your project name', type: String});
-        this.version = this.config.get('version') || "1.0.0";
-        this.description = this.config.get('description') || "";
-    },
-    initializing: function () {
+module.exports = class extends Generator {
+    constructor(args, opts) {
+        super(args, opts);
+        this.argument('name', { type: String, required: true, desc: 'your project name' });
+        this.options.version = this.config.get('version') || "1.0.0";
+        this.options.description = this.config.get('description') || "";
+    }
+
+    initializing() {
+        const choices = [];
+        const user = this.user;
+        const git = user.git;
+        const gitName = git.name();
+        const gitEmail = git.email();
         this.author = this.config.get('author');
-        var choices = []
-            , user = this.user
-            , git = user.git
-            , gitName = git.name()
-            , gitEmail = git.email();
-        this.author && choices.push(this.author);
-        gitName && choices.push(gitName);
-        gitEmail && choices.push(gitEmail);
+        if (this.author) {
+            choices.push(this.author);
+        }
+        if (gitName) {
+            choices.push(gitName);
+        }
+        if (gitEmail) {
+            choices.push(gitEmail);
+        }
         this.authorChoices = _.uniq(choices);
-    },
-    prompting: {
-        name: function () {
-            if (this.name !== _.kebabCase(this.name)) {
-                return this.prompt([
-                    {
-                        type: "input",
-                        name: "name",
-                        message: "\"" + this.name + "\" is an invalid project name. Please retype:",
-                        default: _.kebabCase(this.name),
-                        validate: function (input) {
-                            if (input !== _.kebabCase(input)) {
-                                return "Sorry, project name can no longer contain capital letters.";
-                            }
-                            return true;
-                        }
+    }
+
+    prompting() {
+        return this.prompt([
+            {
+                type: "input",
+                name: "name",
+                when: this.options.name !== _.kebabCase(this.options.name),
+                message: `"${this.options.name}" is an invalid project name. Please retype:`,
+                default: _.kebabCase(this.options.name),
+                validate: (input) => {
+                    if (input !== _.kebabCase(input)) {
+                        return "Sorry, project name can no longer contain capital letters.";
                     }
-                ]).then(function (answers) {
-                    this.name = answers.name;
-                }.bind(this));
-            }
-        },
-        version: function () {
-            return this.prompt([{
+                    return true;
+                },
+            },
+            {
                 type: "input",
                 name: "version",
                 message: "version:",
-                default: this.version,
-                validate: function (input) {
+                default: this.options.version,
+                validate: (input) => {
                     if (!/^\d+\.\d+\.\d+$/.test(input)) {
-                        return "Invalid version: \"" + input + "\", ";
+                        return `Invalid version: "${input}", `;
                     }
                     return true;
-                }
-            }]).then(function (answers) {
-                this.version = answers.version;
-                this.config.set('version', this.version);
-            }.bind(this));
-        },
-        description: function () {
-            return this.prompt([{
+                },
+            },
+            {
                 type: "input",
                 name: "description",
                 message: "description:",
-                default: this.description
-            }]).then(function (answers) {
-                if (answers.description) {
-                    this.description = answers.description;
-                    this.config.set('input description', this.description);
-                }
-            }.bind(this));
-        },
-        author: function () {
-            var promise;
-            if (this.authorChoices.length > 1) {
-                promise = this.prompt([{
-                    type: "list",
-                    name: "author",
-                    message: "author choices:",
-                    choices: this.authorChoices,
-                    default: this.author
-                }]);
-            } else {
-                promise = this.prompt([{
-                    type: "input",
-                    name: "author",
-                    message: "author:",
-                    default: this.author
-                }]);
+                default: this.options.description,
+            },
+            {
+                type: "list",
+                name: "author",
+                message: "author choices:",
+                choices: this.authorChoices,
+                default: this.options.author,
+                when: this.authorChoices.length > 1,
+            },
+            {
+                type: "input",
+                name: "author",
+                message: "author:",
+                default: this.options.author,
+                when: this.authorChoices.length <= 1,
+            },
+        ]).then((answers) => {
+            this.options.version = answers.version;
+            this.config.set('version', this.options.version);
+            if (answers.description) {
+                this.options.description = answers.description;
+                this.config.set('input description', this.options.description);
             }
-            return promise.then(function (answers) {
-                if (answers.author) {
-                    this.author = answers.author;
-                    this.config.set('author', this.author);
-                }
-            }.bind(this));
-        },
-        isOk: function () {
-            var json = _.pick(this, ['name', 'version', 'description', 'author']);
-            return this.prompt([{
-                type: 'confirm',
-                name: 'isOk',
-                message: JSON.stringify(json, null, 2) + '\n is ok ?',
-                default: true
-            }]).then(function (answers) {
-                if (answers.isOk === true) {
-                    this.package = json;
-                }
-            }.bind(this));
-        }
-    },
-    configuring: {
-        packageJSON: function () {
-            if (!this.package) {
-                this.log('Bye!');
-                process.exit(1);
+            if (answers.author) {
+                this.options.author = answers.author;
+                this.config.set('author', this.options.author);
             }
-            this.log('configuring:' + this.package);
-        }
-    },
-    exec: function () {
-        this.spawnCommandSync('git', ['clone', 'https://github.com/xuyuanxiang/heirloom-seed.git', this.destinationPath(this.name)]);
-        this.spawnCommandSync('rm', ['-rf', this.destinationPath(this.name + '/.git')]);
-    },
-    writing: function () {
-        var done = this.async();
-        var existsPackageJSON = this.fs.readJSON(this.destinationPath(this.name + '/package.json'));
-        _.merge(existsPackageJSON, this.package);
-        delete existsPackageJSON.repository;
-        delete existsPackageJSON.bugs;
-        delete existsPackageJSON.homepage;
-        this.fs.writeJSON(this.destinationPath(this.name + '/package.json'), existsPackageJSON);
-        this.fs.commit(done);
+            this.package = _.pick(this.options, ['name', 'version', 'description', 'author']);
+        });
     }
-});
+
+    configuring() {
+        if (!this.package) {
+            this.log('Bye!');
+            process.exit(1);
+        }
+    }
+
+    exec() {
+        this.spawnCommandSync('git', ['clone', 'https://github.com/xuyuanxiang/heirloom-seed.git', this.options.name]);
+        this.destinationRoot(this.destinationPath(this.options.name));
+        this.spawnCommandSync('rm', ['-rf', '.git']);
+        const pkgFile = this.destinationPath('package.json');
+        const pkg = JSON.parse(fs.readFileSync(pkgFile, { encoding: 'utf8' }));
+        fs.writeFileSync(pkgFile, JSON.stringify(Object.assign({}, pkg, this.package)));
+    }
+
+    install() {
+        this.installDependencies({
+            npm: false,
+            bower: false,
+            yarn: true,
+        });
+    }
+
+};

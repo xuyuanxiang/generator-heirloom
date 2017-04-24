@@ -1,15 +1,12 @@
 {
   "name": "generator-heirloom",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "yeoman generator for heirloom web apps",
+  "author": "xuyuanxiang",
+  "license": "MIT",
   "files": [
     "app"
   ],
-  "scripts": {
-    "build": "tsc ./webpack.config.ts && webpack --config webpack.config.js",
-    "watch": "npm run build -- --watch",
-    "test": "jest"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xuyuanxiang/generator-heirloom.git"
@@ -18,23 +15,31 @@
     "yeoman-generator",
     "heirloom"
   ],
-  "author": "xuyuanxiang",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/xuyuanxiang/generator-heirloom/issues"
   },
   "homepage": "https://github.com/xuyuanxiang/generator-heirloom#readme",
+  "scripts": {
+    "clean": "rimraf lib",
+    "prebuild": "npm run lint && npm run clean",
+    "build": "babel src --out-dir lib",
+    "lint": "eslint ."
+  },
+  "pre-commit": [
+    "lint"
+  ],
   "dependencies": {
-    "@types/lodash": "^4.14.37",
-    "@types/yeoman-generator": "0.0.30",
-    "lodash": "^4.16.4",
-    "typescript": "^2.0.6",
-    "yeoman-generator": "^0.24.1"
+    "lodash": "^4.17.4",
+    "yeoman-generator": "^1.1.1"
   },
   "devDependencies": {
-    "@types/webpack": "^1.12.35",
-    "generator-npm-init": "^1.2.3",
-    "ts-loader": "^0.9.5",
-    "webpack": "^1.13.3"
+    "eslint": "^3.13.1",
+    "eslint-config-airbnb": "^14.0.0",
+    "eslint-plugin-flowtype": "^2.30.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^3.0.2",
+    "eslint-plugin-react": "^6.9.0",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^2.5.4"
   }
 }

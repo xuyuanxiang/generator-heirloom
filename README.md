@@ -4,7 +4,7 @@
 
 ## Installation
 ```bash
-npm install yeoman generator-heirloom -g
+npm install yo generator-heirloom -g
 ```
 
 ## Usage
@@ -14,5 +14,3 @@ create your project:
 ```bash
 yo heirloom your-project-name
 ```
-
-More generator sub-commands coming soon...

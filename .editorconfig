@@ -1,0 +1,12 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+chartset = utf-8
+trim_trailing_whitespace = true
+inser_final_newline = true
+end_of_lien = lf
+
+[{package.json,.travis.yml}]
+indent_size = 2

@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+- node
+branches:
+  only:
+  - "/^\\d{1}\\.\\d{1,2}.\\d{1,2}$/"
+notifications:
+  email:
+    recipients:
+    - chaos@xuyuanxiang.cn
+    on_success: never
+    on_failure: always
+deploy:
+  provider: npm
+  email: chaos@xuyuanxiang.cn
+  api_key:
+    secure: 2rBzXOjq01p7cG84N4QZVjtGVkd5UHvNAvqbP0xYGjEmWWMK8IENDerhCkPN8qeINq961A17iNiDzxlxVF3iCvXFZ0/xBo3SyHfQXkWTH8BWUWoF/t1BbKDee7oVs7VHzdnhiObav+dMR4rjqM7rYbYJKNddSIThruOKYlGjWQTdnZeFogb4fcwexLlKzShDIoAPVVgOemoAnvXyoTbL8LtOKtyS+YdKEWpB1/THEmWWoDafJWNnYyuiz+y5qUyjBLZUokPRjVMiRijR1P7EmYTCMpT4yKb3foamqdnPfBoTW41ljr1gHOd3gZEy9nFNcHvFvKamdeyvU0/EEBfAc8N3dSxHuL5iJKrAP3nyqmmpa2RnWEjgbG1F40jLnCN7U6oV2AV33pzWnE8kCV2ivU0fHmMfuwwK4Wap80yL4B2EblP9cJN+Oeg7XG2hmT4R5TTgVelvRq1BixIaezWY3Qjo2QKYPLc1YNd4jydQ9+s7etcjjpYVJQ7HMhi5+PUQ9WWuGaUTcvjR92XL6CIdF4vgj7d23iqE3PRRnXM0XTXUN3S9qMD5gqF0ci8HKNNQJtFFfUvrvzUdmV6WIxMfnD06hV3MsfsdiyaadazVkPFeDVOlzRrfHeyDMWSMxsdEP1v30Ntsi66x1fWpmFQdQdKB1tifcDixCGcESiRXwKE=
+  on:
+    tags: true
+    repo: xuyuanxiang/generator-heirloom
